@@ -2,6 +2,8 @@
 
 /**
  * get_env - prints the environmental variables to stdout
+ * @env: array of environment variables
+ * @str: command input
  *
  * Return: void
  */
@@ -10,14 +12,32 @@ void get_env(char **env)
 {
 	while (*env != NULL)
 	{
-		printf("%s\n", *env);
+		write(STDOUT_FILENO, *env, strlen(*env));
+		write(STDOUT_FILENO, "\n", 1);
 		env++;
 	}
+}
+/**
+ * _getline - reads the command from the user
+ *
+ * Return: command read from user
+ */
+char *_getline(void)
+{
+	ssize_t get;
+	size_t n = 0;
+	char *str = NULL;
+
+	get = getline(&str, &n, stdin);
+	str[strcspn(str, "\n")] = '\0';
+	if (get == -1)
+		return (NULL);
+
+	return (str);
 }
 
 /**
  * main - getss user input and executes the shell
- * @user_input: comand entered by user
  *
  * Return: 0 on success
  */
@@ -25,21 +45,22 @@ void get_env(char **env)
 
 int main(void)
 {
-	char *user_input = NULL;
-	ssize_t get;
-	size_t n = 0;
 	char **tokens = NULL;
+	char *line = NULL, *command = NULL;
 	int status;
 	pid_t pid;
 
 	while (1)
 	{
-		printf("$ ");
-		get = getline(&user_input, &n, stdin);
-		user_input[strcspn(user_input, "\n")] = '\0';
-		if (get == -1)
+		display();
+		line = _getline();
+		if (line == NULL)
+		{
+			write(STDOUT_FILENO, "\n", 1);
 			break;
-
+		}
+		tokens = _tokenize(line);
+		command = path(tokens);
 		pid = fork();
 		if (pid == -1)
 		{
@@ -48,19 +69,22 @@ int main(void)
 		}
 		else if (pid == 0)
 		{
-			if ((strcmp(user_input, "env")) == 0)
+			if (strcmp(line, "env") == 0)
 			{
 				get_env(environ);
 				break;
 			}
-			tokens = _tokenize(user_input);
-			executor(tokens);
+			exit_child(tokens);
+			executor(command, tokens);
 			free(tokens);
 		}
 		else
+		{
 			wait(&status);
+			_exit_status(status);
+		}
 	}
-	free(user_input);
+	free(line);
 	return (0);
 }
 
@@ -68,38 +92,14 @@ int main(void)
  * _tokenize - tokenizes a string
  * @str: string to be tokenized
  * Return: array of tokenized strings
- 
-
-char **_tokenize(char *str)
-{
-	const char *delim = " ";
-	char *token;
-	char **tokens = NULL;
-	int i = 0;
-
-	token = strtok(str, delim);
-	while (token != NULL)
-	{
-		tokens = realloc(tokens, sizeof(char *) * (i + 1));
-		if (!tokens)
-		{
-			perror("Error");
-			exit(EXIT_FAILURE);
-		}
-		tokens[i] = token;
-		i++;
-		token = strtok(NULL, delim);
-	}
-	tokens[i] = NULL;
-	return (tokens);
-}*/
+ */
 
 char **_tokenize(char *str)
 {
 	char **parsed = NULL;
 	int i = 0, j;
 	char *token;
-	
+
 	parsed = malloc(sizeof(char) * (strlen(str) + 1));
 	token = strtok(str, " ");
 	while (token != NULL)
@@ -118,21 +118,22 @@ char **_tokenize(char *str)
 		token = strtok(NULL, " ");
 	}
 	parsed[i] = NULL;
-	return(parsed);
+	return (parsed);
 }
 
 /**
  * executor - executes shell commands
  * @command: array of command and arguments
+ * @tokens: command line arguments
  *
  * Return: 0
  */
 
-int executor(char **command)
+int executor(char *command, char **tokens)
 {
-	if ((access(command[0], X_OK) == 0))
+	if ((access(command, X_OK) == 0))
 	{
-		if ((execve(command[0], command, NULL)) != 0)
+		if ((execve(command, tokens, environ)) != 0)
 		{
 			perror("Error");
 			exit(EXIT_FAILURE);
