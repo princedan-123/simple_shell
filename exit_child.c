@@ -8,7 +8,8 @@
 
 void exit_child(char *tokens[])
 {
-	if (strcmp(tokens[0], "exit") == 0)
+	int check = strcmp(tokens[0], "exit");
+	if (check == 0 )
 		exit(EXIT_SUCCESS);
 }
 
