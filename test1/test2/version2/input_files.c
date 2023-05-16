@@ -3,6 +3,7 @@
 /**
  * get_env - prints the environmental variables to stdout
  * @env: array of environment variables
+ * @str: command input
  *
  * Return: void
  */
@@ -90,18 +91,44 @@ int main(void)
  * Return: array of tokenized strings
  */
 
-char **_tokenize(char *str)
+/*char **_tokenize(char *str)
 {
 	char **parsed = NULL;
+	int i = 0, j;
+	char *token;
 
-	int i = 0;
+	parsed = malloc(sizeof(char) * (strlen(str) + 1));
+	token = strtok(str, " ");
+	while (token != NULL)
+	{
+		parsed[i] = malloc(sizeof(char) * (strlen(str) * 1));
+		if (!parsed[i])
+		{
+			perror("Error");
+			for (j = 0; j < i; j++)
+				free(parsed[j]);
+			free(parsed);
+			exit(EXIT_FAILURE);
+		}
+		strcpy(parsed[i], token);
+		i++;
+		token = strtok(NULL, " ");
+	}
+	parsed[i] = NULL;
+	return (parsed);
+}*/
+char **_tokenize(char *str)
+{
+        char **parsed = NULL;
 
-	char *token = NULL;
+        int i = 0;
 
-	parsed = malloc(sizeof(char *) * strlen(str) + 1);
+        char *token = NULL;
+
+        parsed = malloc(sizeof(char *) * strlen(str) + 1);
 	if (parsed == NULL)
 		return (NULL);
-	token = strtok(str, " ");
+        token = strtok(str, " ");
 	while (token != NULL)
 	{
 		parsed[i] = token;
@@ -123,6 +150,12 @@ char **_tokenize(char *str)
 int executor(char *command, char **tokens)
 {
 	if ((access(command, X_OK) == 0))
-		execve(command, tokens, environ);
+	{
+		if ((execve(command, tokens, environ)) != 0)
+		{
+			//exit(EXIT_FAILURE);
+		}
+	
+	}
 	return (0);
 }

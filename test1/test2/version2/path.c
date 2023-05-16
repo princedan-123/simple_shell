@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * path1 - finds a command using the path variable
+ * path - finds a command using the path variable
  * @tokens: an array of tokenized string
  * Return: returns the command if found
  */
@@ -14,23 +14,29 @@ char *path1(char *tokens[])
 	if (check != NULL)
 	{
 		if (access(tokens[0], F_OK) != 0)
-		{	perror("command not found");
-			return (NULL);
-		}
+			perror("command not found");
+		else
+			return (tokens[0]);
 	}
-	return (tokens[0]);
 }
-/**
- * path2 - makes path for none-path command
- * @tokens: array of strings from tokenization
- * Return: a string is returned
- */
-
+/*
+char *_get_path_environ(void)
+{
+	char *get_path = NULL, *path = NULL;
+	get_path = getenv("PATH");
+	if (get_path == NULL)
+	{
+		perror("unable to get path");
+		return (NULL);
+	}
+	path = strdup(get_path);
+	return (path);
+}*/
 char *path2(char *tokens[])
 {
-	char *parse = NULL, *parsed = NULL, *tmp = NULL, *slash = "/";
+	char *parse = NULL, *parsed = NULL, *tmp = NULL, *slash = "/", *get_path = NULL;
+
 	char *tmp1 = NULL, *tmp2 = NULL, *path = NULL, *command = NULL;
-	char *get_path = NULL;
 
 	get_path = getenv("PATH");
 	path = strdup(get_path);
