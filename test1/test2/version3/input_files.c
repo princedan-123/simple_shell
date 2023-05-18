@@ -30,10 +30,7 @@ char *_getline(void)
 	get = getline(&str, &n, stdin);
 	str[strcspn(str, "\n")] = '\0';
 	if (get == -1)
-	{
-		free(str);
-		exit(EXIT_SUCCESS);
-	}
+		return (NULL);
 
 	return (str);
 }
@@ -56,7 +53,7 @@ int main(void)
 	{
 		display();
 		line = _getline();
-		//end_of_line(line);
+		end_of_line(line);
 		tokens = _tokenize(line);
 		exit_child(tokens, line);
 		command = handle_path(tokens);
@@ -104,7 +101,7 @@ char **_tokenize(char *str)
 
 	char *token = NULL;
 
-	parsed = malloc(sizeof(char *) * (strlen(str) + 1));
+	parsed = malloc(sizeof(char *) * strlen(str) + 1);
 	if (parsed == NULL)
 		return (NULL);
 	token = strtok(str, " ");

@@ -15,7 +15,7 @@ char *handle_path(char *tokens[])
 	if (check != NULL)
 	{
 		command = path1(tokens);
-	//	free(tokens);
+		free(tokens);
 	}
 	else
 		command = path2(tokens);

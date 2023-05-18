@@ -9,18 +9,16 @@
 char *path1(char *tokens[])
 {
 	char *check = NULL;
-	int i;
+
 	check = strchr(tokens[0], '/');
-	i = access(tokens[0], X_OK);
-	if ((check != NULL) && (i == 0))
-		return (tokens[0]);
-	else
+	if (check != NULL)
 	{
-		perror("command not found");
-		free(tokens);
+		if (access(tokens[0], F_OK) != 0)
+		{	perror("command not found");
+			return (NULL);
+		}
 	}
-	
-	return (NULL);
+	return (tokens[0]);
 }
 /**
  * path2 - makes path for none-path command
