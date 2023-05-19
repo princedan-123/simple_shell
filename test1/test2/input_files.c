@@ -23,17 +23,17 @@ void get_env(char **env)
  */
 char *_getline(void)
 {
-	ssize_t get;
+	ssize_t get = 0;
 	size_t n = 0;
 	char *str = NULL;
 
 	get = getline(&str, &n, stdin);
-	str[strcspn(str, "\n")] = '\0';
 	if (get == -1)
 	{
 		free(str);
 		exit(EXIT_SUCCESS);
 	}
+	str[strcspn(str, "\n")] = '\0';
 
 	return (str);
 }
@@ -56,15 +56,11 @@ int main(void)
 	{
 		display();
 		line = _getline();
-		//end_of_line(line);
 		tokens = _tokenize(line);
 		exit_child(tokens, line);
-		command = handle_path(tokens);
+		command = handle_path(tokens, line);
 		if (command == NULL)
-		{
-			free(line);
 			continue;
-		}
 		pid = fork();
 		if (pid == -1)
 		{

@@ -3,32 +3,32 @@
 /**
  * path1 - finds a command using the path variable
  * @tokens: an array of tokenized string
+ * @line: input string read from stdin by getline function
  * Return: returns the command if found
  */
 
-char *path1(char *tokens[])
+char *path1(char *tokens[], char *line)
 {
 	char *check = NULL;
 	int i;
+
 	check = strchr(tokens[0], '/');
 	i = access(tokens[0], X_OK);
 	if ((check != NULL) && (i == 0))
 		return (tokens[0]);
-	else
-	{
-		perror("command not found");
-		free(tokens);
-	}
-	
+	perror("command not found");
+	free(tokens);
+	free(line);
 	return (NULL);
 }
 /**
  * path2 - makes path for none-path command
  * @tokens: array of strings from tokenization
+ * @line: input string read from stdin using getline function
  * Return: a string is returned
  */
 
-char *path2(char *tokens[])
+char *path2(char *tokens[], char *line)
 {
 	char *parse = NULL, *parsed = NULL, *tmp = NULL, *slash = "/";
 	char *tmp1 = NULL, *tmp2 = NULL, *path = NULL, *command = NULL;
@@ -59,8 +59,8 @@ char *path2(char *tokens[])
 	{
 		perror("command not found");
 		free(path);
-		//free(parsed);
 		free(tokens);
+		free(line);
 		return (NULL);
 	}
 	free(path);

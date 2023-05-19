@@ -19,7 +19,7 @@ char *path(char *tokens[]);
 int _exit_status(int status);
 void end_of_line(char *line);
 void memory_free(char *line, char *command, char *tokens[]);
-char *handle_path(char *tokens[]);
-char *path1(char *tokens[]);
-char *path2(char *tokens[]);
+char *handle_path(char *tokens[], char *line);
+char *path1(char *tokens[], char *line);
+char *path2(char *tokens[], char *line);
 #endif

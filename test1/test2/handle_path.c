@@ -7,17 +7,14 @@
  * Return: a string which is a path
  */
 
-char *handle_path(char *tokens[])
+char *handle_path(char *tokens[], char *line)
 {
 	char *check = NULL, *command = NULL;
 
 	check = strchr(tokens[0], '/');
 	if (check != NULL)
-	{
-		command = path1(tokens);
-	//	free(tokens);
-	}
+		command = path1(tokens, line);
 	else
-		command = path2(tokens);
+		command = path2(tokens, line);
 	return (command);
 }
