@@ -60,7 +60,7 @@ int main(void)
 		{
 			get_env(environ);
 			free(line);
-			break;
+			continue;
 		}
 
 		tokens = _tokenize(line);
