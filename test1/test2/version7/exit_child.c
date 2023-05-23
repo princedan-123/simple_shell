@@ -10,22 +10,14 @@
 void exit_child(char *tokens[], char *line)
 {
 	char *str = "exit";
-	int arg = 0;
 
 	int check = strcmp(tokens[0], str);
 
-	if ((check == 0) && (tokens[1] == NULL))
+	if (check == 0)
 	{
 		free(line);
 		free(tokens);
 		exit(EXIT_SUCCESS);
-	}
-	else if ((check == 0) && (tokens[1] != NULL))
-	{
-		arg = _atoi(tokens[1]);
-		free(line);
-		free(tokens);
-		exit(arg);
 	}
 }
 

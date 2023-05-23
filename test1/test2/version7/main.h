@@ -22,5 +22,4 @@ void memory_free(char *line, char *command, char *tokens[]);
 char *handle_path(char *tokens[], char *line);
 char *path1(char *tokens[], char *line);
 char *path2(char *tokens[], char *line);
-int _atoi(char *token);
 #endif
