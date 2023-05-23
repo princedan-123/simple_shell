@@ -9,6 +9,7 @@
 int _atoi(char *token)
 {
 	int num = 0, result = 0, base = 10, sign = 1, index = 0;
+
 	if (token[0] == '-')
 	{
 		sign = -1;
