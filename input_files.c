@@ -15,7 +15,6 @@ void get_env(char **env)
 		write(STDOUT_FILENO, "\n", 1);
 		env++;
 	}
-	free(env);
 }
 /**
  * _getline - reads the command from the user
@@ -57,6 +56,13 @@ int main(void)
 	{
 		display();
 		line = _getline();
+		if (strcmp(line, "env") == 0)
+		{
+			get_env(environ);
+			free(line);
+			break;
+		}
+
 		tokens = _tokenize(line);
 		exit_child(tokens, line);
 		command = handle_path(tokens, line);
@@ -70,12 +76,6 @@ int main(void)
 		}
 		else if (pid == 0)
 		{
-			if (strcmp(line, "env") == 0)
-			{
-				get_env(environ);
-				free(line);
-				break;
-			}
 			executor(command, tokens);
 		}
 		else
