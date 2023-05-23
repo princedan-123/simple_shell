@@ -11,6 +11,7 @@
 extern char **environ;
 
 char **_tokenize(char *str);
+char *_getline(void);
 void get_env(char **env);
 int executor(char *command, char **tokens);
 void exit_child(char *tokens[], char *line);
