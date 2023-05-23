@@ -3,14 +3,30 @@
 /**
  * exit_child - exits the child process
  * @tokens: an array of tokenized strings
+ * @line: inputs read from stdin using getline function
  * Return: nothing is returned
  */
 
-void exit_child(char *tokens[])
+void exit_child(char *tokens[], char *line)
 {
-	int check = strcmp(tokens[0], "exit");
-	if (check == 0 )
+	char *str = "exit";
+	int arg = 0;
+
+	int check = strcmp(tokens[0], str);
+
+	if ((check == 0) && (tokens[1] == NULL))
+	{
+		free(line);
+		free(tokens);
 		exit(EXIT_SUCCESS);
+	}
+	else if ((check == 0) && (tokens[1] != NULL))
+	{
+		arg = _atoi(tokens[1]);
+		free(line);
+		free(tokens);
+		exit(arg);
+	}
 }
 
 /**

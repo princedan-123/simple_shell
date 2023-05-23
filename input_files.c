@@ -3,7 +3,6 @@
 /**
  * get_env - prints the environmental variables to stdout
  * @env: array of environment variables
- * @str: command input
  *
  * Return: void
  */
@@ -24,14 +23,17 @@ void get_env(char **env)
  */
 char *_getline(void)
 {
-	ssize_t get;
+	ssize_t get = 0;
 	size_t n = 0;
 	char *str = NULL;
 
 	get = getline(&str, &n, stdin);
-	str[strcspn(str, "\n")] = '\0';
 	if (get == -1)
-		return (NULL);
+	{
+		free(str);
+		exit(EXIT_SUCCESS);
+	}
+	str[strcspn(str, "\n")] = '\0';
 
 	return (str);
 }
@@ -54,13 +56,11 @@ int main(void)
 	{
 		display();
 		line = _getline();
-		if (line == NULL)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			break;
-		}
 		tokens = _tokenize(line);
-		command = path(tokens);
+		exit_child(tokens, line);
+		command = handle_path(tokens, line);
+		if (command == NULL)
+			continue;
 		pid = fork();
 		if (pid == -1)
 		{
@@ -74,17 +74,15 @@ int main(void)
 				get_env(environ);
 				break;
 			}
-			exit_child(tokens);
 			executor(command, tokens);
-			free(tokens);
 		}
 		else
 		{
 			wait(&status);
 			_exit_status(status);
 		}
+		memory_free(line, command, tokens);
 	}
-	free(line);
 	return (0);
 }
 
@@ -97,23 +95,18 @@ int main(void)
 char **_tokenize(char *str)
 {
 	char **parsed = NULL;
-	int i = 0, j;
-	char *token;
 
-	parsed = malloc(sizeof(char) * (strlen(str) + 1));
+	int i = 0;
+
+	char *token = NULL;
+
+	parsed = malloc(sizeof(char *) * (strlen(str) + 1));
+	if (parsed == NULL)
+		return (NULL);
 	token = strtok(str, " ");
 	while (token != NULL)
 	{
-		parsed[i] = malloc(sizeof(char) * (strlen(str) * 1));
-		if (!parsed[i])
-		{
-			perror("Error");
-			for (j = 0; j < i; j++)
-				free(parsed[j]);
-			free(parsed);
-			exit(EXIT_FAILURE);
-		}
-		strcpy(parsed[i], token);
+		parsed[i] = token;
 		i++;
 		token = strtok(NULL, " ");
 	}
@@ -132,17 +125,6 @@ char **_tokenize(char *str)
 int executor(char *command, char **tokens)
 {
 	if ((access(command, X_OK) == 0))
-	{
-		if ((execve(command, tokens, environ)) != 0)
-		{
-			perror("Error");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-	{
-		perror("Error");
-		exit(EXIT_FAILURE);
-	}
+		execve(command, tokens, environ);
 	return (0);
 }
