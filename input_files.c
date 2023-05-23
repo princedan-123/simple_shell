@@ -15,6 +15,7 @@ void get_env(char **env)
 		write(STDOUT_FILENO, "\n", 1);
 		env++;
 	}
+	free(env);
 }
 /**
  * _getline - reads the command from the user
@@ -72,6 +73,7 @@ int main(void)
 			if (strcmp(line, "env") == 0)
 			{
 				get_env(environ);
+				free(line);
 				break;
 			}
 			executor(command, tokens);
