@@ -3,7 +3,7 @@
 /**
  * _atoi - converts a string of digits to integers
  * @token: the string to be converted
- * Result: an integer value is returned
+ * Return: an integer value is returned
  */
 
 int _atoi(char *token)
